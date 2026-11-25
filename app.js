@@ -367,8 +367,8 @@
         else if (page === "library") {
           const recent = getRecentlyPlayedTracks();
           html = '<h1 class="page-title">Músicas</h1><p class="page-description">Suas músicas, álbuns e artistas, sempre à mão.</p>' +
-            (recent.length ? '<section class="section library-recent"><div class="section-head"><h2>Tocados recentemente</h2><small>' + recent.length + (recent.length === 1 ? ' faixa' : ' faixas') + '</small></div>' + trackRows(recent) + '</section>' : '') +
             libraryShortcuts(page) +
+            (recent.length ? '<section class="section library-recent"><div class="section-head"><h2>Tocados recentemente</h2><small>' + recent.length + (recent.length === 1 ? ' faixa' : ' faixas') + '</small></div>' + trackRows(recent) + '</section>' : '') +
             '<section class="section"><div class="section-head"><h2>Todas as músicas</h2><small>' + filtered.length + (filtered.length === 1 ? ' faixa' : ' faixas') + '</small></div>' + trackRows(filtered) + '</section>';
         } else if (page === "favorites") {
           html = '<h1 class="page-title">Favoritas</h1><p class="page-description">As músicas que você guardou com carinho.</p>' + libraryShortcuts(page) + (filtered.length ? trackRows(filtered) : '<div class="empty-state"><span class="empty-icon">' + icons.heart + '</span><h2>Nenhuma favorita por enquanto</h2><p>Toque no coração ao lado de uma música para encontrá-la aqui.</p></div>');
