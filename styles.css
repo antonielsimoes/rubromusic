@@ -95,11 +95,17 @@
     .section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 15px; }
     .section-head h2 { margin: 0; font-size: 21px; letter-spacing: -.55px; }
     .section-head small { color: var(--muted); font-size: 12px; }
+    .section-link { display: inline-flex; align-items: center; gap: 6px; flex: 0 0 auto; padding: 4px 0; border: 0; background: transparent; color: var(--muted); font-size: 12px; font-weight: 700; cursor: pointer; transition: color .18s; }
+    .section-link:hover { color: var(--text); }
+    .section-link span { color: var(--accent-strong); font-size: 15px; }
     .quick-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
     .quick-card { display: flex; align-items: center; min-width: 0; min-height: 62px; overflow: hidden; border-radius: 7px; border: 1px solid var(--line); background: var(--surface-raised); color: var(--text); text-align: left; cursor: pointer; transition: background .18s, transform .18s; }
     .quick-card:hover { background: var(--surface-hover); transform: translateY(-1px); }
     .quick-card .art { width: 62px; height: 62px; border-radius: 0; }
-    .quick-card b { padding: 0 13px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: 13px; }
+    .quick-copy { display: grid; gap: 4px; min-width: 0; padding: 0 13px; }
+    .quick-copy b, .quick-copy small { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+    .quick-copy b { font-size: 13px; }
+    .quick-copy small { color: var(--muted); font-size: 11px; }
     .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); gap: 13px; }
     .card { position: relative; min-width: 0; padding: 11px; border: 1px solid transparent; border-radius: 9px; background: transparent; text-align: left; cursor: pointer; transition: background .18s, transform .18s; }
     .card:hover { background: var(--surface-raised); transform: translateY(-2px); }
@@ -237,7 +243,9 @@
       .quick-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
       .quick-card { min-height: 53px; }
       .quick-card .art { width: 53px; height: 53px; }
-      .quick-card b { padding: 0 8px; font-size: 11px; }
+      .quick-copy { gap: 3px; padding: 0 8px; }
+      .quick-copy b { font-size: 11px; }
+      .quick-copy small { font-size: 10px; }
       .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
       .card { padding: 8px; }
       .player { position: relative; z-index: 2; grid-row: 3; grid-column: 1; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: minmax(0, 1fr) 22px; align-items: center; gap: 0 5px; min-width: 0; padding: 7px 10px 6px; border: 1px solid var(--line); border-radius: 10px 10px 0 0; }

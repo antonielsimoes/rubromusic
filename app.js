@@ -307,6 +307,17 @@
         }).join("");
         return '<table class="track-list"><thead><tr><th class="track-number">#</th><th>Título</th><th>Ano</th><th class="track-duration">' + icons.clock + '</th></tr></thead><tbody>' + rows + '</tbody></table>';
       }
+      function libraryShortcuts(activePage) {
+        const shortcuts = [
+          { page: "library", label: "Todas as músicas" },
+          { page: "albums", label: "Álbuns" },
+          { page: "artists", label: "Artistas" },
+          { page: "favorites", label: "Favoritas" }
+        ];
+        return '<div class="filters">' + shortcuts.map((shortcut) =>
+          '<button class="filter-chip' + (activePage === shortcut.page ? " active" : "") + '" data-page="' + shortcut.page + '" aria-pressed="' + String(activePage === shortcut.page) + '">' + shortcut.label + '</button>'
+        ).join("") + '</div>';
+      }
       function emptyMarkup() {
         return '<section class="empty-state"><span class="empty-icon">' + icons.folder + '</span><h2>Sua música, do seu jeito.</h2><p>Importe a pasta Música do Windows para montar sua biblioteca. O Rubro lê as tags dos MP3s — artista, álbum, faixa, ano e capa — e toca tudo offline. Seus arquivos nunca saem do computador.</p><button class="primary-button action-red" data-action="import">' + icons.plus + ' Escolher pasta Música</button></section>';
       }
@@ -316,11 +327,11 @@
         const albums = albumsFrom(filtered);
         const artists = artistsFrom(filtered);
         const recents = [...tracks].sort((a, b) => b.file.lastModified - a.file.lastModified).slice(0, 6);
-        const quick = albums.slice(0, 6).map((album) => '<button class="quick-card" data-open="album" data-key="' + esc(JSON.stringify([album.artist, album.name])) + '"><img class="art" src="' + esc(album.cover) + '" alt=""><b>' + esc(album.name) + '</b></button>').join("");
+        const quick = filtered.slice(0, 6).map((track) => '<button class="quick-card" data-play-track="' + tracks.indexOf(track) + '" aria-label="Reproduzir ' + esc(track.title) + '"><img class="art" src="' + esc(coverFor(track)) + '" alt=""><span class="quick-copy"><b>' + esc(track.title) + '</b><small>' + esc(track.artist) + '</small></span></button>').join("");
         return '<section class="hero"><div><p class="eyebrow">Seu espaço. Sua música.</p><h1>Bom ouvir você.</h1><p>Uma biblioteca feita dos seus arquivos, sempre disponível — mesmo sem internet.</p></div><div class="hero-action"><button class="primary-button" data-action="import">' + icons.plus + ' Adicionar músicas</button></div></section>' +
-          '<section class="section"><div class="section-head"><h2>Atalhos</h2><small>' + tracks.length + (tracks.length === 1 ? " música" : " músicas") + ' na biblioteca</small></div><div class="quick-grid">' + quick + '</div></section>' +
-          '<section class="section"><div class="section-head"><h2>Álbuns da sua coleção</h2><small>' + albums.length + (albums.length === 1 ? " álbum" : " álbuns") + '</small></div><div class="cards">' + albums.slice(0, 6).map((item) => cardMarkup(item, "album")).join("") + '</div></section>' +
-          (artists.length ? '<section class="section"><div class="section-head"><h2>Artistas</h2><small>' + artists.length + (artists.length === 1 ? " artista" : " artistas") + '</small></div><div class="cards">' + artists.slice(0, 6).map((item) => cardMarkup(item, "artist")).join("") + '</div></section>' : "") +
+          '<section class="section"><div class="section-head"><h2>Músicas</h2><button class="section-link" data-page="library">Ver Todos <span aria-hidden="true">→</span></button></div><div class="quick-grid">' + quick + '</div></section>' +
+          '<section class="section"><div class="section-head"><h2>Álbuns da sua coleção</h2><button class="section-link" data-page="albums">Ver Todos <span aria-hidden="true">→</span></button></div><div class="cards">' + albums.slice(0, 6).map((item) => cardMarkup(item, "album")).join("") + '</div></section>' +
+          (artists.length ? '<section class="section"><div class="section-head"><h2>Artistas</h2><button class="section-link" data-page="artists">Ver Todos <span aria-hidden="true">→</span></button></div><div class="cards">' + artists.slice(0, 6).map((item) => cardMarkup(item, "artist")).join("") + '</div></section>' : "") +
           '<section class="section"><div class="section-head"><h2>Adicionadas recentemente</h2><small>Reproduza uma faixa para começar</small></div>' + trackRows(recents) + '</section>';
       }
       function renderSearchResults() {
@@ -355,20 +366,18 @@
         else if (!tracks.length) html = emptyMarkup();
         else if (page === "library") {
           const recent = getRecentlyPlayedTracks();
-          html = '<h1 class="page-title">Sua Biblioteca</h1><p class="page-description">Suas músicas, álbuns e artistas, sempre à mão.</p>' +
+          html = '<h1 class="page-title">Músicas</h1><p class="page-description">Suas músicas, álbuns e artistas, sempre à mão.</p>' +
             (recent.length ? '<section class="section library-recent"><div class="section-head"><h2>Tocados recentemente</h2><small>' + recent.length + (recent.length === 1 ? ' faixa' : ' faixas') + '</small></div>' + trackRows(recent) + '</section>' : '') +
-            '<div class="filters"><button class="filter-chip active">Todas as músicas</button><button class="filter-chip" data-page="albums">Álbuns</button><button class="filter-chip" data-page="artists">Artistas</button></div>' +
+            libraryShortcuts(page) +
             '<section class="section"><div class="section-head"><h2>Todas as músicas</h2><small>' + filtered.length + (filtered.length === 1 ? ' faixa' : ' faixas') + '</small></div>' + trackRows(filtered) + '</section>';
         } else if (page === "favorites") {
-          html = '<h1 class="page-title">Favoritas</h1><p class="page-description">As músicas que você guardou com carinho.</p>' + (filtered.length ? trackRows(filtered) : '<div class="empty-state"><span class="empty-icon">' + icons.heart + '</span><h2>Nenhuma favorita por enquanto</h2><p>Toque no coração ao lado de uma música para encontrá-la aqui.</p></div>');
+          html = '<h1 class="page-title">Favoritas</h1><p class="page-description">As músicas que você guardou com carinho.</p>' + libraryShortcuts(page) + (filtered.length ? trackRows(filtered) : '<div class="empty-state"><span class="empty-icon">' + icons.heart + '</span><h2>Nenhuma favorita por enquanto</h2><p>Toque no coração ao lado de uma música para encontrá-la aqui.</p></div>');
         } else if (page === "artists") {
           const artists = artistsFrom(filtered);
-          html = '<h1 class="page-title">Artistas</h1><p class="page-description">' + artists.length + (artists.length === 1 ? " artista na sua coleção" : " artistas na sua coleção") + '</p><div class="cards">' + artists.map((item) => cardMarkup(item, "artist")).join("") + '</div>';
-          if (!artists.length) html = emptyMarkup();
+          html = '<h1 class="page-title">Artistas</h1><p class="page-description">' + artists.length + (artists.length === 1 ? " artista na sua coleção" : " artistas na sua coleção") + '</p>' + libraryShortcuts(page) + (artists.length ? '<div class="cards">' + artists.map((item) => cardMarkup(item, "artist")).join("") + '</div>' : '<div class="empty-state"><h2>Nenhum artista encontrado</h2><p>Importe músicas para organizar sua coleção por artista.</p></div>');
         } else {
           const albums = albumsFrom(filtered);
-          html = '<h1 class="page-title">Álbuns</h1><p class="page-description">' + albums.length + (albums.length === 1 ? " álbum na sua coleção" : " álbuns na sua coleção") + '</p><div class="cards">' + albums.map((item) => cardMarkup(item, "album")).join("") + '</div>';
-          if (!albums.length) html = emptyMarkup();
+          html = '<h1 class="page-title">Álbuns</h1><p class="page-description">' + albums.length + (albums.length === 1 ? " álbum na sua coleção" : " álbuns na sua coleção") + '</p>' + libraryShortcuts(page) + (albums.length ? '<div class="cards">' + albums.map((item) => cardMarkup(item, "album")).join("") + '</div>' : '<div class="empty-state"><h2>Nenhum álbum encontrado</h2><p>Importe músicas para organizar sua coleção por álbum.</p></div>');
         }
         content.innerHTML = html;
       }
@@ -635,6 +644,8 @@
           if (item && item.tracks.length) playTrack(tracks.indexOf(item.tracks[0]));
           return;
         }
+        const quickTrack = event.target.closest("[data-play-track]");
+        if (quickTrack) { playTrack(Number(quickTrack.dataset.playTrack)); return; }
         const playList = event.target.closest("[data-play-list]");
         if (playList && currentDetail) { playTrack(tracks.indexOf(currentDetail.item.tracks[0])); return; }
         const albumFavorite = event.target.closest("[data-favorite-album]");
