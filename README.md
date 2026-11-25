@@ -2,6 +2,12 @@
 
 Player de música offline para Windows. Não precisa instalar dependências nem usar uma conta.
 
+## Arquivos
+
+- `index.html`: estrutura da interface.
+- `styles.css`: estilos e temas.
+- `app.js`: biblioteca, leitura de tags e reprodução.
+
 ## Abrir
 
 Abra `index.html` no Microsoft Edge ou no Google Chrome. Para importar músicas, escolha **Escolher pasta Música** e selecione a pasta `Música` do seu usuário do Windows. O navegador pedirá acesso aos arquivos escolhidos; o Rubro lê as tags ID3 e reproduz os MP3s no próprio computador.
