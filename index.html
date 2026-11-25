@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#111010">
   <link rel="icon" type="image/svg+xml" href="./favicon.svg">
   <title>Rubro — música no seu ritmo</title>
@@ -75,6 +75,12 @@
       </div>
       <div class="player-extra"><button class="icon-button" id="volume-icon" title="Volume" aria-label="Volume"></button><input class="volume" id="volume" type="range" min="0" max="1" step="0.01" value="0.8" aria-label="Volume"></div>
     </footer>
+    <nav class="mobile-nav" id="mobile-nav" aria-label="Navegação principal">
+      <button class="mobile-nav-button active" data-mobile-page="home" aria-current="page"><span class="mobile-nav-icon" data-mobile-icon="home"></span><span>Início</span></button>
+      <button class="mobile-nav-button" data-mobile-action="search"><span class="mobile-nav-icon" data-mobile-icon="search"></span><span>Buscar</span></button>
+      <button class="mobile-nav-button" data-mobile-page="library"><span class="mobile-nav-icon" data-mobile-icon="library"></span><span>Sua Biblioteca</span></button>
+      <button class="mobile-nav-button" data-mobile-action="import"><span class="mobile-nav-icon" data-mobile-icon="plus"></span><span>Criar</span></button>
+    </nav>
   </div>
   <input id="folder-input" type="file" accept=".mp3,audio/mpeg" webkitdirectory directory multiple>
   <audio id="audio" preload="metadata"></audio>

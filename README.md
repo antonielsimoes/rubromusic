@@ -19,6 +19,7 @@ Também é possível importar outra pasta pelo botão `+` ao lado de **Sua bibli
 - Biblioteca agrupada por artista e álbum, com discografia baseada nas tags dos arquivos.
 - Reprodução, faixa anterior/próxima, busca, modo aleatório, repetição, volume e favoritas.
 - Histórico de músicas reproduzidas, salvo localmente e ordenado pela reprodução mais recente.
+- Interface adaptada para celular, com navegação inferior, acesso à biblioteca e controles do player sempre visíveis.
 - Temas claro e escuro, com a preferência salva no navegador.
 - Equalizador gráfico de 10 bandas, pré-amplificador, Bass e Treble, com ajustes salvos localmente.
 - Capas incorporadas aos MP3s e tags ID3 são lidas localmente.

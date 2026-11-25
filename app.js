@@ -87,6 +87,7 @@
       $("#volume-icon").innerHTML = icons.volume;
       $("#now-favorite").innerHTML = icons.heart;
       $$(".nav-button [data-icon]").forEach((el) => { el.innerHTML = icons[el.dataset.icon]; });
+      $$(".mobile-nav-icon[data-mobile-icon]").forEach((el) => { el.innerHTML = icons[el.dataset.mobileIcon]; });
       $("#eq-close").innerHTML = icons.clear;
       const eqBandDefinitions = [{ param: "preamp", label: "Pré", aria: "Pré-amplificador" }]
         .concat(eqFrequencies.map((frequency, index) => ({ param: "band-" + index, label: frequency, aria: "Frequência " + frequency + " Hz" })));
@@ -353,7 +354,11 @@
         if (page === "home") html = renderHome();
         else if (!tracks.length) html = emptyMarkup();
         else if (page === "library") {
-          html = '<h1 class="page-title">Sua música</h1><p class="page-description">Todos os MP3s que você escolheu importar.</p><div class="filters"><button class="filter-chip active">Todas as músicas</button><button class="filter-chip" data-page="albums">Álbuns</button><button class="filter-chip" data-page="artists">Artistas</button></div>' + trackRows(filtered);
+          const recent = getRecentlyPlayedTracks();
+          html = '<h1 class="page-title">Sua Biblioteca</h1><p class="page-description">Suas músicas, álbuns e artistas, sempre à mão.</p>' +
+            (recent.length ? '<section class="section library-recent"><div class="section-head"><h2>Tocados recentemente</h2><small>' + recent.length + (recent.length === 1 ? ' faixa' : ' faixas') + '</small></div>' + trackRows(recent) + '</section>' : '') +
+            '<div class="filters"><button class="filter-chip active">Todas as músicas</button><button class="filter-chip" data-page="albums">Álbuns</button><button class="filter-chip" data-page="artists">Artistas</button></div>' +
+            '<section class="section"><div class="section-head"><h2>Todas as músicas</h2><small>' + filtered.length + (filtered.length === 1 ? ' faixa' : ' faixas') + '</small></div>' + trackRows(filtered) + '</section>';
         } else if (page === "favorites") {
           html = '<h1 class="page-title">Favoritas</h1><p class="page-description">As músicas que você guardou com carinho.</p>' + (filtered.length ? trackRows(filtered) : '<div class="empty-state"><span class="empty-icon">' + icons.heart + '</span><h2>Nenhuma favorita por enquanto</h2><p>Toque no coração ao lado de uma música para encontrá-la aqui.</p></div>');
         } else if (page === "artists") {
@@ -388,8 +393,18 @@
         $("#clear-recent").disabled = list.length === 0;
         $("#side-library").innerHTML = list.length ? list.map((track) => '<button class="side-item" data-track="' + tracks.indexOf(track) + '"><img class="art" src="' + esc(coverFor(track)) + '" alt=""><span class="side-item-copy"><b>' + esc(track.title) + '</b><small>' + esc(track.artist) + '</small></span></button>').join("") : '<p class="empty-side">As músicas que você tocar aparecerão aqui.</p>';
       }
+      function getRecentlyPlayedTracks() {
+        const tracksByKey = new Map(tracks.map((track) => [favoriteKey(track), track]));
+        return recentTrackKeys.map((key) => tracksByKey.get(key)).filter(Boolean);
+      }
       function updateNav() {
         $$(".nav-button").forEach((button) => button.classList.toggle("active", !currentDetail && button.dataset.page === page));
+        $$(".mobile-nav-button[data-mobile-page]").forEach((button) => {
+          const active = !currentDetail && button.dataset.mobilePage === page;
+          button.classList.toggle("active", active);
+          if (active) button.setAttribute("aria-current", "page");
+          else button.removeAttribute("aria-current");
+        });
       }
       function updatePlayer() {
         const track = tracks[currentIndex];
@@ -639,6 +654,18 @@
       $("#nav").addEventListener("click", (event) => {
         const button = event.target.closest("[data-page]");
         if (button) setPage(button.dataset.page);
+      });
+      $("#mobile-nav").addEventListener("click", (event) => {
+        const button = event.target.closest(".mobile-nav-button");
+        if (!button) return;
+        if (button.dataset.mobilePage) {
+          setPage(button.dataset.mobilePage);
+        } else if (button.dataset.mobileAction === "search") {
+          $("#search-input").focus();
+          $("#search-input").scrollIntoView({ behavior: "smooth", block: "nearest" });
+        } else if (button.dataset.mobileAction === "import") {
+          $("#folder-input").click();
+        }
       });
       $("#search-input").addEventListener("input", (event) => {
         searchTerm = event.target.value;
